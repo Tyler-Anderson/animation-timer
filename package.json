@@ -1,0 +1,27 @@
+{
+  "name": "animation-timer",
+  "version": "1.0.0",
+  "description": "animation timer with some easing functions and a stopwatch i wrote ages ago ",
+  "main": "animationTimer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tyler-Anderson/animation-timer.git"
+  },
+  "keywords": [
+    "animation",
+    "timer",
+    "canvas",
+    "sprite",
+    "easing",
+    "stopwatch"
+  ],
+  "author": "Tyler Anderson <tyler@brava.do> (http://brava.do)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tyler-Anderson/animation-timer/issues"
+  },
+  "homepage": "https://github.com/Tyler-Anderson/animation-timer#readme"
+}
