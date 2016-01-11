@@ -90,4 +90,7 @@ AnimationTimer.makeBounce = (bounces) ->
 AnimationTimer.makeLinear = ->
     (percentComplete)-> percentComplete
 
-module.exports = AnimationTimer
+module.exports =  {
+   AnimationTimer : AnimationTimer,
+   Stopwatch : Stopwatch
+}
