@@ -6,49 +6,38 @@
  */
 
 (function() {
-  var AnimationTimer, Stopwatch;
+  var AnimationTimer, stopwatch;
 
-  Stopwatch = (function() {
-    function Stopwatch() {
-      this;
-    }
-
-    Stopwatch.prototype.startTime = 0;
-
-    Stopwatch.prototype.running = false;
-
-    Stopwatch.prototype.start = function() {
-      this.startTime = +new Date();
-      this.running = true;
-      return true;
-    };
-
-    Stopwatch.prototype.stop = function() {
-      this.elapsed = +new Date() - this.startTime;
-      this.running = false;
-      return true;
-    };
-
-    Stopwatch.prototype.getElapsedTime = function() {
-      if (this.running) {
-        return (+new Date()) - this.startTime;
-      } else {
-        return this.elapsed;
+  stopwatch = function() {
+    this.startTime = 0;
+    this.running = false;
+    return {
+      start: function() {
+        this.startTime = +new Date();
+        this.running = true;
+        return true;
+      },
+      stop: function() {
+        this.elapsed = +new Date() - this.startTime;
+        this.running = false;
+        return true;
+      },
+      getElapsed: function() {
+        if (this.running) {
+          return (+new Date()) - this.startTime;
+        } else {
+          return this.elapsed;
+        }
+      },
+      isRunning: function() {
+        return this.running;
+      },
+      reset: function() {
+        this.elapsed = 0;
+        return true;
       }
     };
-
-    Stopwatch.prototype.isRunning = function() {
-      return this.running;
-    };
-
-    Stopwatch.prototype.reset = function() {
-      this.elapsed = 0;
-      return true;
-    };
-
-    return Stopwatch;
-
-  })();
+  };
 
   AnimationTimer = (function() {
     function AnimationTimer(duration, timeWarp) {
@@ -64,7 +53,7 @@
         } else {
           this.timeWarp = this.makeLinear;
         }
-        this.stopwatch = new Stopwatch();
+        this.stopwatch = new stopwatch();
         return this;
       }
     }
@@ -84,12 +73,12 @@
     };
 
     AnimationTimer.prototype.getRealElapsedTime = function() {
-      return this.stopwatch.getElapsedTime();
+      return this.stopwatch.getElapsed();
     };
 
     AnimationTimer.prototype.getElapsedTime = function() {
       var elapsedTime, percentComplete;
-      elapsedTime = this.stopwatch.getElapsedTime();
+      elapsedTime = this.stopwatch.getElapsed();
       percentComplete = elapsedTime / this.duration;
       if (!this.stopwatch.running) {
         return void 0;
