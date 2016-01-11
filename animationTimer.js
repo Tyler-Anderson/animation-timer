@@ -3,14 +3,15 @@
 /*
    Tyler Anderson
    Tyler@Brava.do
-   old animationTimer i wrote i'm not sure it'll be of any use to anyone or not
  */
 
 (function() {
   var AnimationTimer, Stopwatch;
 
   Stopwatch = (function() {
-    function Stopwatch() {}
+    function Stopwatch() {
+      this;
+    }
 
     Stopwatch.prototype.startTime = 0;
 
@@ -51,10 +52,26 @@
 
   AnimationTimer = (function() {
     function AnimationTimer(duration, timeWarp) {
-      this.duration = duration != null ? duration : 1000;
-      this.timeWarp = timeWarp;
-      this.stopwatch = new Stopwatch();
+      if (duration == null) {
+        duration = 1000;
+      }
+      if (!(this instanceof AnimationTimer)) {
+        return new AnimationTimer(duration, timeWarp);
+      } else {
+        this.duration = duration;
+        if (typeof timeWarp === "string") {
+          this.timeWarp = this[timeWarp];
+        } else {
+          this.timeWarp = this.makeLinear;
+        }
+        this.stopwatch = new Stopwatch();
+        return this;
+      }
     }
+
+    AnimationTimer.prototype.changeDuration = function(duration1) {
+      this.duration = duration1;
+    };
 
     AnimationTimer.prototype.start = function() {
       this.stopwatch.start();
@@ -84,8 +101,7 @@
     };
 
     AnimationTimer.prototype.isRunning = function() {
-      this.stopwatch.running;
-      return true;
+      return this.stopwatch.running(!this.isOver() ? false : void 0);
     };
 
     AnimationTimer.prototype.isOver = function() {
@@ -97,57 +113,54 @@
       return true;
     };
 
+    AnimationTimer.prototype.makeEaseOut = function(strength) {
+      return function(percentComplete) {
+        return 1 - Math.pow(1 - percentComplete, strength * 2);
+      };
+    };
+
+    AnimationTimer.prototype.makeEaseIn = function(strength) {
+      return function(percentComplete) {
+        return Math.pow(percentComplete, strength * 2);
+      };
+    };
+
+    AnimationTimer.prototype.makeEaseInOut = function() {
+      return function(percentComplete) {
+        return percentComplete - Math.sin(percentComplete * 2 * Math.PI) / (2 * Math.PI);
+      };
+    };
+
+    AnimationTimer.prototype.makeElastic = function(passes) {
+      passes = passes != null ? passes : 3;
+      return function(percentComplete) {
+        return ((1 - Math.cos(percentComplete * Math.PI * passes)) * (1 - percentComplete)) + percentComplete;
+      };
+    };
+
+    AnimationTimer.prototype.makeBounce = function(bounces) {
+      var fn;
+      fn = AnimationTimer.makeElastic(bounces);
+      return function(percentComplete) {
+        percentComplete = fn(percentComplete);
+        if (percentComplete <= 1) {
+          return percentComplete;
+        } else {
+          return 2 - percentComplete;
+        }
+      };
+    };
+
+    AnimationTimer.prototype.makeLinear = function() {
+      return function(percentComplete) {
+        return percentComplete;
+      };
+    };
+
     return AnimationTimer;
 
   })();
 
-  AnimationTimer.makeEaseOut = function(strength) {
-    return function(percentComplete) {
-      return 1 - Math.pow(1 - percentComplete, strength * 2);
-    };
-  };
-
-  AnimationTimer.makeEaseIn = function(strength) {
-    return function(percentComplete) {
-      return Math.pow(percentComplete, strength * 2);
-    };
-  };
-
-  AnimationTimer.makeEaseInOut = function() {
-    return function(percentComplete) {
-      return percentComplete - Math.sin(percentComplete * 2 * Math.PI) / (2 * Math.PI);
-    };
-  };
-
-  AnimationTimer.makeElastic = function(passes) {
-    passes = passes != null ? passes : 3;
-    return function(percentComplete) {
-      return ((1 - Math.cos(percentComplete * Math.PI * passes)) * (1 - percentComplete)) + percentComplete;
-    };
-  };
-
-  AnimationTimer.makeBounce = function(bounces) {
-    var fn;
-    fn = AnimationTimer.makeElastic(bounces);
-    return function(percentComplete) {
-      percentComplete = fn(percentComplete);
-      if (percentComplete <= 1) {
-        return percentComplete;
-      } else {
-        return 2 - percentComplete;
-      }
-    };
-  };
-
-  AnimationTimer.makeLinear = function() {
-    return function(percentComplete) {
-      return percentComplete;
-    };
-  };
-
-  module.exports = {
-    AnimationTimer: AnimationTimer,
-    Stopwatch: Stopwatch
-  };
+  module.exports = AnimationTimer;
 
 }).call(this);
