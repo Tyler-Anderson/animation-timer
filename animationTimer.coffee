@@ -29,7 +29,7 @@ stopwatch = ->
 
 
 class AnimationTimer
-  constructor : (duration = 1000, timeWarp) ->
+  constructor : (duration = 1000, timeWarp, @warpArgs) ->
     if not (this instanceof AnimationTimer)
       return new AnimationTimer(duration, timeWarp)
     else
@@ -40,7 +40,7 @@ class AnimationTimer
       @stopwatch = new stopwatch()
       return this
 
-  changeDuration : (@duration) ->
+  setDuration: (@duration) ->
     
   start : ->
     @stopwatch.start()
@@ -70,11 +70,17 @@ class AnimationTimer
     @stopwatch.reset()
     true
 
+  setEasing : (easingName, args) ->
+    @timeWarp = @[easingName](args)
+
   makeEaseOut : (strength) ->
+    if strength is undefined then strenght = @warpArgs
     (percentComplete) ->
        1 - Math.pow(1 - percentComplete, strength*2)
 
   makeEaseIn : (strength) ->
+    if strength is undefined then strenght = @warpArgs
+
     (percentComplete) ->
       Math.pow(percentComplete, strength*2)
 
@@ -83,12 +89,14 @@ class AnimationTimer
       percentComplete - Math.sin(percentComplete*2*Math.PI) / (2*Math.PI)
 
   makeElastic : (passes) ->
+    if passes = undefined then passes = @warpArgs
     passes = passes ? 3
     (percentComplete) ->
       ((1-Math.cos(percentComplete * Math.PI * passes)) *
         (1 - percentComplete)) + percentComplete
 
   makeBounce : (bounces) ->
+    if bounces is undefined then bounces = @warpArgs
     fn = AnimationTimer.makeElastic bounces
     (percentComplete) ->
       percentComplete = fn percentComplete
