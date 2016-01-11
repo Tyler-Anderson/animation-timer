@@ -1,6 +1,6 @@
 {
-  "name": "animation-timer",
-  "version": "1.0.0",
+  "name": "anim-timer",
+  "version": "1.0.1",
   "description": "animation timer with some easing functions and a stopwatch i wrote ages ago ",
   "main": "animationTimer.js",
   "scripts": {
